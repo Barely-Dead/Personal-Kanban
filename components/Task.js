@@ -9,16 +9,16 @@ const Task = (props) => {
     const timing = 350;
     const animatedValue = useSharedValue(0);
 
-    useEffect(() => {
-        if (props.selectedItem.id == props.item.id) {
+    // useEffect(() => {
+    //     if (props.selectedItem.id == props.item.id) {
             
-        } else {
-            if (animatedValue.value == 1) {
-                animatedValue.value = 0;
-            }
-        }
+    //     } else {
+    //         if (animatedValue.value == 1) {
+    //             animatedValue.value = 0;
+    //         }
+    //     }
         
-    }, [props.selectedItem])
+    // }, [props.selectedItem])
 
     const backgroundColor = () => {
         switch (props.item.status) {
@@ -67,7 +67,7 @@ const Task = (props) => {
     }
 
     const handleSelect = () => {
-        animatedValue.value = 1;
+        //animatedValue.value = 1;
         props._selectedItem(props.item, props.flatListIndex);
     }
 
@@ -132,7 +132,7 @@ const Task = (props) => {
             <Animated.View style={[styles.box, styles.radius, Styles.coreShadow, animatedStyle]} >
 
                 {/* Title */}
-                <View style={[{ backgroundColor: backgroundColor(), height: 30, justifyContent: 'center', borderTopLeftRadius: 3, borderTopRightRadius: 12 }]}>
+                <View style={[{ backgroundColor: backgroundColor(), height: 30, justifyContent: 'center', borderTopLeftRadius: 3, borderTopRightRadius: 12}]}>
 
                     <ScrollView
                         horizontal={true}

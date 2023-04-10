@@ -1,11 +1,12 @@
 
 
-import { useState, useEffect } from "react";
-import { Keyboard, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useState, useEffect, useRef } from "react";
+import { Dimensions, Keyboard, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropdownPicker from "./DropdownPicker";
 import Styles, { backgroundColor, textColor, namePlaceholderColor } from "../Styles";
 import { taskStatuses, recurringBool } from '../helpers/globalData';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Animated, { interpolate, useSharedValue, withTiming, Easing, useAnimatedStyle } from "react-native-reanimated";
 
 
 const fadedColor = '#aaa';
@@ -26,8 +27,31 @@ const AddEditRecord = (props) => {
     const [showCreatedDate, setShowCreatedDate] = useState(false)
     const [showCompletedDate, setShowCompletedDate] = useState(false);
 
+    const SCREEN_HEIGHT = Dimensions.get('window').height;
+    const animatedValue = useSharedValue(0);
+
+    const animatedOpacity = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(interpolate(animatedValue.value, [0, 1], [0, 1]), { 
+                duration: 500,  
+                easing: Easing.inOut(Easing.exp),
+                useNativeDriver: true 
+            }),
+        };
+    })
+    const animatedPos = useAnimatedStyle(() => {
+        return {
+            transform: [{translateY: withTiming(interpolate(animatedValue.value, [0, 1], [SCREEN_HEIGHT, 0]), { 
+                duration: 500,  
+                easing: Easing.inOut(Easing.exp),
+                useNativeDriver: true 
+            }), }]
+        };
+    })
 
     useEffect(() => {
+        animatedValue.value = 1;
+        
         const selectedItem = {...props.selectedItem};
 
         if (selectedItem.name == undefined) { //new record
@@ -98,50 +122,56 @@ const AddEditRecord = (props) => {
     }
 
     const closeModal = (value) => {
-        if (value == 'delete') { // Delete
-            let newValues = {
-                id: id,
-                name: name,
-                status: status,
-                summary: summary,
-                notes: notes,
-                dueDate, dueDate,
-                dateCreated: dateCreated,
-                dateCompleted: dateCompleted,
-                recurring: recurring,
+        animatedValue.value = 0;
+        setTimeout(() => {
+
+            if (value == 'delete') { // Delete
+                let newValues = {
+                    id: id,
+                    name: name,
+                    status: status,
+                    summary: summary,
+                    notes: notes,
+                    dueDate, dueDate,
+                    dateCreated: dateCreated,
+                    dateCompleted: dateCompleted,
+                    recurring: recurring,
+                }
+                props._deleteRecord(newValues);
+                return
             }
-            props._deleteRecord(newValues);
-            return
-        }
-        if (value == 'save') { // Save
-            let newValues = {
-                id: id,
-                name: name,
-                status: status,
-                summary: summary,
-                notes: notes,
-                dueDate, dueDate,
-                dateCreated: dateCreated,
-                dateCompleted: dateCompleted,
-                recurring: recurring
+            if (value == 'save') { // Save
+                let newValues = {
+                    id: id,
+                    name: name,
+                    status: status,
+                    summary: summary,
+                    notes: notes,
+                    dueDate, dueDate,
+                    dateCreated: dateCreated,
+                    dateCompleted: dateCompleted,
+                    recurring: recurring
+                }
+                //console.log(newValues);
+                props._saveRecord({...newValues});
             }
-            //console.log(newValues);
-            props._saveRecord({...newValues});
-        }
-        props._handleModal(); // Save && Cancel
+            props._handleModal(); // Save && Cancel
+            
+        }, 500);
     }
 
     
 
 
     return (
-        <View style={[Styles.container, { backgroundColor: 'rgba(255,255,255,0.5)' }]}>
+        <Animated.View style={[Styles.container]}>
+            <Animated.View style={[{backgroundColor: 'rgba(255,255,255,0.5)', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0}, animatedOpacity]}/>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 enabled={true}
             >
 
-                <View style={[Styles.modal, Styles.castShadow]}>
+                <Animated.View style={[Styles.modal, Styles.castShadow, animatedPos]}>
 
                     {/* name */}
                     <View style={[{ backgroundColor: backgroundColor(status), borderTopLeftRadius: 6, borderTopRightRadius: 24, width: 700 }]}>
@@ -315,9 +345,9 @@ const AddEditRecord = (props) => {
 
 
 
-                </View>
+                </Animated.View>
             </KeyboardAvoidingView>
-        </View>
+        </Animated.View>
     )
 }
 

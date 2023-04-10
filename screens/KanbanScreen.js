@@ -132,6 +132,7 @@ const KanbanScreen = () => {
         //console.log(item);
         setSelectedItem(item);
         setSelectedItemIndex(index);
+        toggleModal();
     }
 
     const hidePlaceHolders = () => {
@@ -191,6 +192,9 @@ const KanbanScreen = () => {
     }
 
     const toggleModal = () => {
+        if (modalAddVisible) {
+            setSelectedItem({});
+        }
         setModalAddVisible(!modalAddVisible); // toggle modal
     }
 
@@ -253,7 +257,7 @@ const KanbanScreen = () => {
             <Modal
                 visible={modalAddVisible}
                 transparent={true}
-                animationType={'slide'}
+                animationType={'none'}
             >
 
                 <AddEditRecord lastId={lastId} selectedItem={selectedItem} _handleModal={toggleModal} _saveRecord={saveRecord} _deleteRecord={deleteRecord} />

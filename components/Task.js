@@ -131,6 +131,8 @@ const Task = (props) => {
 
             <Animated.View style={[styles.box, styles.radius, Styles.coreShadow, animatedStyle]} >
 
+                <View style={{width: 20, height: 20, borderRadius: 10, backgroundColor: backgroundColor(), position: 'absolute', top: 0, right: 0}}></View>
+
                 {/* Title */}
                 <View style={[{ backgroundColor: backgroundColor(), height: 30, justifyContent: 'center', borderTopLeftRadius: 3, borderTopRightRadius: 12}]}>
 

@@ -145,7 +145,7 @@ const Styles = StyleSheet.create({
     h3: {
         textAlign: 'left',
         fontWeight: '700',
-        fontSize: 22,
+        fontSize: 18,
         letterSpacing: -1,
         color: '#555',
     },

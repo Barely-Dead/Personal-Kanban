@@ -353,21 +353,20 @@ const KanbanScreen = () => {
             {/* <View style={Styles.debugArea}>
                 <Text style={{fontSize: 20}}>{debugLog}</Text>
             </View> */}
-            <TouchableOpacity style={[Styles.castShadow, {zIndex: 3,  position: 'absolute', top: 30, right: 30, width: 60, height: 60, backgroundColor: '#fff', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }]}
+            <TouchableOpacity style={[Styles.coreShadow, {zIndex: 3,  position: 'absolute', top: 30, right: 30, width: 60, height: 60, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center',
+            borderTopLeftRadius: 3, borderTopRightRadius: 12, borderBottomLeftRadius: 12, borderBottomRightRadius: 3 }]}
                 onPress={() => toggleModal()}>
-                {selectedItem.name == undefined ?
+ 
                 <Feather name="plus" size={32} color={backgroundColor('Review')} />
-                :
-                <Feather name="edit-3" size={32} color={backgroundColor('Review')} />
-                }
+               
             </TouchableOpacity>
 
-            {selectedItem.name != undefined ?
+            {/* {selectedItem.name != undefined ?
             <TouchableOpacity style={[Styles.castShadow, {zIndex: 3,  position: 'absolute', top: 110, right: 30, width: 60, height: 60, backgroundColor: '#fff', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }]}
                 onPress={() => setSelectedItem({})}>
                 <Feather name="x" size={32} color={backgroundColor('To do')} />
             </TouchableOpacity>
-            : null }
+            : null } */}
 
             {/* <Draggable2 colWidth={colWidth} fullColWidth={fullColWidth} pos={draggablePos} selectedItem={selectedItem} selectedItemIndex={selectedItemIndex} _preChangeStatus={_preChangeStatus} _changeStatus={_changeStatus} displayTasks={displayTasks} /> */}
         </View>

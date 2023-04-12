@@ -12,7 +12,7 @@ import Styles, { backgroundColor } from '../Styles';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
-const KanbanScreen = () => {
+const KanbanScreen = (props) => {
 
     const [reRender, setReRender] = useState(0);
     const [debugLog, setDebugLog] = useState('');
@@ -59,17 +59,17 @@ const KanbanScreen = () => {
                 storeDataObject('tasks', []);
                 setAllTasks([]);
             } else {
-                try { 
+                try {
                     //console.log()
                     setLastId(Math.max(...data.map(o => o.id)));
-                } catch { 
-                    setLastId(-1) 
+                } catch {
+                    setLastId(-1)
                 }
 
                 //setAllTasks([...data, ...placeholders]);
                 setAllTasks([...data]);
                 data.map((item, index) => {
-                    console.log(item.id, item.name)
+                    //console.log(item.id, item.name)
                 })
             }
         }))
@@ -100,17 +100,45 @@ const KanbanScreen = () => {
                 complete: []
             };
 
+            // filter all tasks into status's
             let backlog = allTasks.filter((item) => item.status.includes("Backlog"));
             let toDo = allTasks.filter((item) => item.status.includes("To do"));
             let inProgress = allTasks.filter((item) => item.status.includes("In progress"));
             let review = allTasks.filter((item) => item.status.includes("Review"));
             let complete = allTasks.filter((item) => item.status.includes("Complete"));
 
+            // sort 
             backlog = backlog.sort(function (a, b) { return b.dueDate > a.dueDate ? -1 : 1 });
             toDo = toDo.sort(function (a, b) { return b.dueDate > a.dueDate ? -1 : 1 });
             inProgress = inProgress.sort(function (a, b) { return b.dueDate > a.dueDate ? -1 : 1 });
             review = review.sort(function (a, b) { return b.dueDate > a.dueDate ? -1 : 1 });
             complete = complete.sort(function (a, b) { return b.dateCompleted > a.dateCompleted ? 1 : -1 });
+
+            // create completed sections
+            let sections = [];
+            let date;
+            for (item of complete.reverse()) {
+                date = new Date(item.dateCompleted);
+                let day = date.getDay();
+                if (day > 4) { date.setDate(date.getDate() - (day - 4)) }
+                if (day < 4) { date.setDate(date.getDate() + (4 - day)) }
+                break
+            };
+
+            let today = new Date();
+            date.setHours(23, 59, 47); 
+            while (date < today) {
+                ///console.log(date)
+                const dateSection = {
+                    name: 'dateSection',
+                    status: 'Complete',
+                    dateCompleted: new Date(date).toJSON()
+                }
+                complete.push({...dateSection});
+                date.setDate(date.getDate() + 7);
+            }
+            //console.log("sections:", sections);
+
 
             displayTasks.backlog = backlog;
             displayTasks.backlog.push(placeholders[0]); // keep placeholders out of allTasks as we don't need to save them to the Database
@@ -121,7 +149,12 @@ const KanbanScreen = () => {
             displayTasks.review = review;
             displayTasks.review.push(placeholders[3]);
             displayTasks.complete = complete;
-            displayTasks.complete.push(placeholders[4]);
+            displayTasks.complete.push(sections);
+            complete = complete.sort(function (a, b) { return b.dateCompleted > a.dateCompleted ? 1 : -1 });
+            console.log("***");
+            complete.map((item, index) => {
+                console.log(item.name, item.dateCompleted);
+            });
             setDisplayTasks(displayTasks);
         }
 
@@ -202,17 +235,17 @@ const KanbanScreen = () => {
         let recurring = {}; //recurring placeholder
 
         let newRecord = true;
-        let allTasksArray = [...allTasks]; 
+        let allTasksArray = [...allTasks];
         allTasksArray = allTasksArray.map((item, index) => {
             if (item.id == data.id) { // check if edited task
-                newRecord = false; 
+                newRecord = false;
                 return data
             }
             return item
         })
 
         if (newRecord) { // add new task
-            allTasksArray.push(data); 
+            allTasksArray.push(data);
         }
         // if (data.recurring == "Yes" && data.status == "Complete") { //add recurring task
         //     recurring = {...data};
@@ -344,31 +377,33 @@ const KanbanScreen = () => {
                     showsVerticalScrollIndicator={false}
                 />
             </View>
-            <View style={[{width: 100}]}>
-                
+            <View style={[Styles.column, { flex: 0, width: 90 }]}>
+                <Text style={[Styles.h2, { width: '100%' }]}>Menu</Text>
+                <View style={Styles.kanbanList}>
+
+                    <TouchableOpacity style={[Styles.coreShadow, {
+                        margin: 5, width: 60, height: 60, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center',
+                        borderTopLeftRadius: 3, borderTopRightRadius: 12, borderBottomLeftRadius: 12, borderBottomRightRadius: 3
+                    }]}
+                        onPress={() => props.navigation.toggleDrawer()}>
+
+                        <Feather name="menu" size={32} color={backgroundColor('Review')} />
+
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[Styles.coreShadow, {
+                        margin: 5, width: 60, height: 60, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center',
+                        borderTopLeftRadius: 3, borderTopRightRadius: 12, borderBottomLeftRadius: 12, borderBottomRightRadius: 3
+                    }]}
+                        onPress={() => toggleModal()}>
+
+                        <Feather name="plus" size={32} color={backgroundColor('To do')} />
+
+                    </TouchableOpacity>
+                </View>
 
             </View>
-            {/* <Draggable colWidth={colWidth} fullColWidth={fullColWidth} pos={draggablePos} selectedItem={selectedItem} selectedItemIndex={selectedItemIndex} _preChangeStatus={_preChangeStatus} _changeStatus={_changeStatus} displayTasks={displayTasks} /> */}
-            {/* Debug Area */}
-            {/* <View style={Styles.debugArea}>
-                <Text style={{fontSize: 20}}>{debugLog}</Text>
-            </View> */}
-            <TouchableOpacity style={[Styles.coreShadow, {zIndex: 3,  position: 'absolute', top: 30, right: 30, width: 60, height: 60, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center',
-            borderTopLeftRadius: 3, borderTopRightRadius: 12, borderBottomLeftRadius: 12, borderBottomRightRadius: 3 }]}
-                onPress={() => toggleModal()}>
- 
-                <Feather name="plus" size={32} color={backgroundColor('Review')} />
-               
-            </TouchableOpacity>
 
-            {/* {selectedItem.name != undefined ?
-            <TouchableOpacity style={[Styles.castShadow, {zIndex: 3,  position: 'absolute', top: 110, right: 30, width: 60, height: 60, backgroundColor: '#fff', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }]}
-                onPress={() => setSelectedItem({})}>
-                <Feather name="x" size={32} color={backgroundColor('To do')} />
-            </TouchableOpacity>
-            : null } */}
-
-            {/* <Draggable2 colWidth={colWidth} fullColWidth={fullColWidth} pos={draggablePos} selectedItem={selectedItem} selectedItemIndex={selectedItemIndex} _preChangeStatus={_preChangeStatus} _changeStatus={_changeStatus} displayTasks={displayTasks} /> */}
         </View>
 
     )

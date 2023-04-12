@@ -30,20 +30,23 @@ const AddEditRecord = (props) => {
     const SCREEN_HEIGHT = Dimensions.get('window').height;
     const animatedValue = useSharedValue(0);
 
+    const TIMING = 750;
+    const easing = Easing.inOut(Easing.exp);
     const animatedOpacity = useAnimatedStyle(() => {
+        console.log(animatedValue.value)
         return {
             opacity: withTiming(interpolate(animatedValue.value, [0, 1], [0, 1]), { 
-                duration: 500,  
-                easing: Easing.inOut(Easing.exp),
+                duration: TIMING,  
+                easing: easing,
                 useNativeDriver: true 
             }),
         };
     })
     const animatedPos = useAnimatedStyle(() => {
         return {
-            transform: [{translateY: withTiming(interpolate(animatedValue.value, [0, 1], [SCREEN_HEIGHT, 0]), { 
-                duration: 500,  
-                easing: Easing.inOut(Easing.exp),
+            transform: [{translateY: withTiming(interpolate(animatedValue.value, [0, 1], [SCREEN_HEIGHT / 4 * 3, 0]), { 
+                duration: TIMING,  
+                easing: easing,
                 useNativeDriver: true 
             }), }]
         };
@@ -157,7 +160,7 @@ const AddEditRecord = (props) => {
             }
             props._handleModal(); // Save && Cancel
             
-        }, 500);
+        }, TIMING);
     }
 
     

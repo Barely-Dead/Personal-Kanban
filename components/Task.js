@@ -11,13 +11,13 @@ const Task = (props) => {
 
     // useEffect(() => {
     //     if (props.selectedItem.id == props.item.id) {
-            
+
     //     } else {
     //         if (animatedValue.value == 1) {
     //             animatedValue.value = 0;
     //         }
     //     }
-        
+
     // }, [props.selectedItem])
 
     const backgroundColor = () => {
@@ -108,88 +108,96 @@ const Task = (props) => {
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
-            shadowOpacity: withTiming(interpolate(animatedValue.value, [0, 1], [0.13, 0.2]), { 
-                duration: timing,  
+            shadowOpacity: withTiming(interpolate(animatedValue.value, [0, 1], [0.13, 0.2]), {
+                duration: timing,
                 easing: Easing.out(Easing.exp),
-                useNativeDriver: true 
+                useNativeDriver: true
             }),
-            shadowRadius: withTiming(interpolate(animatedValue.value, [0, 1], [4.65, 8.65]), { 
-                duration: timing,  
+            shadowRadius: withTiming(interpolate(animatedValue.value, [0, 1], [4.65, 8.65]), {
+                duration: timing,
                 easing: Easing.out(Easing.exp),
-                useNativeDriver: true 
+                useNativeDriver: true
             }),
-            transform: [{ scale: withTiming(interpolate(animatedValue.value, [0, 1], [1, 1.1]), { 
-                duration: timing,  
-                easing: Easing.out(Easing.exp),
-                useNativeDriver: true 
-            }) }],
+            transform: [{
+                scale: withTiming(interpolate(animatedValue.value, [0, 1], [1, 1.1]), {
+                    duration: timing,
+                    easing: Easing.out(Easing.exp),
+                    useNativeDriver: true
+                })
+            }],
         }
     })
 
     return (
-        props.item.name != 'placeholder' ?
+        props.item.name == undefined ?
+            null :
+            props.item.name == 'placeholder' ?
+                null :
+                props.item.name != 'dateSection' ?
 
-            <Animated.View style={[styles.box, styles.radius, Styles.coreShadow, animatedStyle]} >
+                    <Animated.View style={[styles.box, styles.radius, Styles.coreShadow, animatedStyle]} >
 
-                <View style={{width: 20, height: 20, borderRadius: 10, backgroundColor: backgroundColor(), position: 'absolute', top: 0, right: 0}}></View>
+                        <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: backgroundColor(), position: 'absolute', top: 0, right: 0 }}></View>
 
-                {/* Title */}
-                <View style={[{ backgroundColor: backgroundColor(), height: 30, justifyContent: 'center', borderTopLeftRadius: 3, borderTopRightRadius: 12}]}>
+                        {/* Title */}
+                        <View style={[{ backgroundColor: backgroundColor(), height: 30, justifyContent: 'center', borderTopLeftRadius: 3, borderTopRightRadius: 12 }]}>
 
-                    <ScrollView
-                        horizontal={true}
-                        contentContainerStyle={{ paddingLeft: 5, paddingRight: 10, alignItems: 'center', }}
-                        style={{}}
-                    >
-                        <Text style={[Styles.h3, { color: textColor(), }]} numberOfLines={1}>{props.children}</Text>
-                    </ScrollView>
-
-                </View>
-
-                {/* Summary */}
-                <TouchableOpacity
-                    onPress={() => handleSelect()}
-                    style={[{ backgroundColor: '#fff', justifyContent: 'flex-start', padding: 5, overflow: 'hidden', borderBottomLeftRadius: 12, borderBottomRightRadius: 3 } ]}>
-
-                    
-                        <View style={[Styles.row, { justifyContent: 'space-between' }]}
+                            <ScrollView
+                                horizontal={true}
+                                contentContainerStyle={{ paddingLeft: 5, paddingRight: 10, alignItems: 'center', }}
+                                style={{}}
                             >
-                            {props.item?.status == 'Complete' ?
-                                <>
-                                    {props.item.recurring == 'Yes' ? <Feather name="repeat" size={16} color="#555" /> : <Text></Text>}
-                                    <Text><B>{returnDate(props.item?.dateCompleted)}</B> <Feather name="flag" size={16} color="black" /></Text>
-                                </>
-                                :
-                                <>
-                                    {props.item.recurring == 'Yes' ? <Feather name="repeat" size={16} color="#555" /> : <Text></Text>}
-                                    <Text><B>{returnDate(props.item?.dueDate)}</B> <Feather name="calendar" size={16} color="black" /></Text>
-                                </>
-                            }
+                                <Text style={[Styles.h3, { color: textColor(), }]} numberOfLines={1}>{props.children}</Text>
+                            </ScrollView>
+
                         </View>
 
-
-                        <Text
-                            numberOfLines={2}>
-                            {props.item?.summary}
-                        </Text>
-
-                        <Text
-                            numberOfLines={4}>
-                            {props.item?.notes}
-                        </Text>
-                    
-
-                </TouchableOpacity>
-
-                
-
-            </Animated.View>
+                        {/* Summary */}
+                        <TouchableOpacity
+                            onPress={() => handleSelect()}
+                            style={[{ backgroundColor: '#fff', justifyContent: 'flex-start', padding: 5, overflow: 'hidden', borderBottomLeftRadius: 12, borderBottomRightRadius: 3 }]}>
 
 
-            :
-            <View style={[styles.container, { opacity: props.item.visible }]}>
-                <View style={[styles.placeholder, { height: props.colWidth / 2 }]}><Text></Text></View>
-            </View>
+                            <View style={[Styles.row, { justifyContent: 'space-between' }]}
+                            >
+                                {props.item?.status == 'Complete' ?
+                                    <>
+                                        {props.item.recurring == 'Yes' ? <Feather name="repeat" size={16} color="#555" /> : <Text></Text>}
+                                        <Text><B>{returnDate(props.item?.dateCompleted)}</B> <Feather name="flag" size={16} color="black" /></Text>
+                                    </>
+                                    :
+                                    <>
+                                        {props.item.recurring == 'Yes' ? <Feather name="repeat" size={16} color="#555" /> : <Text></Text>}
+                                        <Text><B>{returnDate(props.item?.dueDate)}</B> <Feather name="calendar" size={16} color="black" /></Text>
+                                    </>
+                                }
+                            </View>
+
+
+                            <Text
+                                numberOfLines={2}>
+                                {props.item?.summary}
+                            </Text>
+
+                            <Text
+                                numberOfLines={4}>
+                                {props.item?.notes}
+                            </Text>
+
+
+                        </TouchableOpacity>
+
+
+
+                    </Animated.View>
+
+
+                    :
+                    <View style={[Styles.row, { width: '100%', justifyContent: 'space-between', alignItems: 'center' }]}>
+                        <View style={{ height: 2, backgroundColor: '#FF1493', flex: 1, }} />
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', color: '#FF1493', marginLeft: 10, marginRight: 10 }}>{returnDate(props.item?.dateCompleted)}</Text>
+                        <View style={{ height: 2, backgroundColor: '#FF1493', flex: 1, }} />
+                    </View>
     )
 }
 

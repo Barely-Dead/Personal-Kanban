@@ -23,14 +23,15 @@ function DrawerNav() {
             null
         ),
         headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.openDrawer()}
-                style={{marginRight: 45}}>
-                <Feather
-                    name="menu"
-                    size={32}
-                    color={backgroundColor('To do')}
-                />
-            </TouchableOpacity>
+            // <TouchableOpacity onPress={() => navigation.openDrawer()}
+            //     style={{marginRight: 45}}>
+            //     <Feather
+            //         name="menu"
+            //         size={32}
+            //         color={backgroundColor('To do')}
+            //     />
+            // </TouchableOpacity>
+            null
         ),
         headerTitleStyle: {
             fontWeight: '700',
